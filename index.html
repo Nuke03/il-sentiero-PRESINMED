@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Praterie altomontane della Maiella · PRESINMED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;700;800&family=Source+Serif+4:ital,wght@1,400;1,600&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Colori: quelli dei manuali dei partner (vedi Colori PRESINMED.txt).
+     Il rosso non è nella palette: resta solo per bandierine e sentiero, come i segnavia CAI. */
+  :root {
+    --carta: #ffffff;
+    --blu: #325175;
+    --azzurro: #5797B0;
+    --verde-acqua: #34988F;
+    --linea: #9FB6CC;
+    --sentiero: #c8102e;
+    --nero: #000000;
+    /* Toni ricavati dalla palette: testo secondario, barre vuote, fondi delle tre tappe */
+    --tenue: #46586A;
+    --vuoto: #E3EAF0;
+    --tappa-1: #E7EDF2;
+    --tappa-2: #DCEFED;
+    --tappa-3: #EFF3F6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--carta); color: var(--nero); font-family: "Atkinson Hyperlegible Next", sans-serif; font-size: 17px; line-height: 1.5; }
+  ::selection { background: var(--blu); color: #fff; }
+  a { color: inherit; text-underline-offset: 3px; }
+  :focus-visible { outline: 3px solid var(--blu); outline-offset: 2px; }
+  .cond { font-family: "Barlow Semi Condensed", sans-serif; }
+
+  /* Colonna unica, pensata per il telefono */
+  .pagina { max-width: 430px; margin: 0 auto; padding-bottom: 48px; }
+
+  /* Fascia con il nome del progetto, come nei manuali dei partner */
+  .fascia { display: flex; align-items: flex-end; gap: 12px; padding: 10px 14px 0; background: var(--blu); color: #fff; font-weight: 700; font-size: 34px; line-height: 1; letter-spacing: 0.06em; }
+  .fascia img { display: block; width: auto; height: 50px; }
+  .fascia span { padding-bottom: 12px; }
+
+  /* Loghi, nello stesso ordine del roll-up. Ogni logo ha la sua altezza per sembrare grande uguale. */
+  .loghi { display: grid; gap: 14px; margin: 16px 16px 0; }
+  .loghi div { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .loghi img { display: block; width: auto; }
+  /* In alto i due soggetti principali (Molise, EnviXLab), sotto i partner, più piccoli */
+  .logo-molise { height: 66px; }
+  .logo-envixlab { height: 60px; }
+  .loghi .partner { padding-top: 12px; border-top: 1px solid var(--linea); }
+  .logo-biodiversa { height: 32px; }
+  .logo-parco { height: 54px; }
+  .logo-geopark { height: 36px; }
+  .logo-granada { height: 46px; }
+
+  /* Cartiglio con il titolo, come sulle carte dei sentieri */
+  .cartiglio { margin: 16px 12px 0; border: 2px solid var(--blu); border-bottom: 0; padding: 12px 12px 10px; }
+  .cartiglio h1 { font-weight: 800; font-size: 29px; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; color: var(--blu); }
+  .cartiglio .sotto { margin-top: 6px; font-family: "Source Serif 4", serif; font-style: italic; font-size: 18px; line-height: 1.3; color: var(--blu); }
+  .cartiglio .progetto { margin-top: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tenue); }
+
+  /* Le due metà della pagina: interviste e workshop */
+  .linguette { margin: 0 12px; display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--blu); border-bottom: 0; }
+  .linguette a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .linguette a.attiva { background: var(--blu); color: #fff; }
+  .linguette a + a { border-left: 2px solid var(--blu); color: var(--tenue); }
+
+  /* La mappa del sentiero */
+  .riquadro { margin: 0 12px; border: 2px solid var(--blu); background: #fff; }
+  .tappa-1 { fill: var(--tappa-1); }
+  .tappa-2 { fill: var(--tappa-2); }
+  .tappa-3 { fill: var(--tappa-3); }
+  .confine { fill: none; stroke: var(--verde-acqua); stroke-width: 1; stroke-dasharray: 3 3; }
+  .segno { fill: var(--blu); }
+  .riquadro svg { display: block; width: 100%; height: auto; }
+  .riquadro text { font-family: "Barlow Semi Condensed", sans-serif; }
+  .nome-tappa { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; fill: var(--tenue); }
+  .paese { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; fill: var(--blu); }
+  .traccia-fondo { fill: none; stroke: #fff; stroke-width: 8; stroke-linejoin: round; }
+  .traccia { fill: none; stroke: var(--sentiero); stroke-width: 3; stroke-dasharray: 8 5; stroke-linejoin: round; }
+  .tocco { fill: transparent; }
+  .bandiera .fondo { fill: #fff; }
+  .bandiera .rosso { fill: var(--sentiero); }
+  .bandiera .bordo { fill: none; stroke: var(--nero); stroke-width: 1.5; }
+  .bandiera text { font-size: 14px; font-weight: 800; text-anchor: middle; fill: var(--nero); }
+  .bandiera:focus, .cima:focus { outline: none; }
+  .bandiera:focus-visible .bordo { stroke: var(--blu); stroke-width: 3.5; }
+  .bandiera:active .fondo { fill: #f3d6da; }
+  .cima text { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; fill: var(--blu); }
+  .cima:focus-visible text { fill: var(--blu); text-decoration: underline; }
+
+  /* L'elenco delle domande sotto la mappa */
+  .indice { margin: 32px 12px 0; }
+  .indice > h2 { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 800; font-size: 22px; line-height: 1.1; letter-spacing: 0.02em; text-transform: uppercase; color: var(--blu); }
+  .indice h3 { margin-top: 24px; padding-bottom: 6px; border-bottom: 2px solid var(--blu); font-size: 17px; line-height: 1.3; color: var(--blu); }
+  .indice ol { list-style: none; }
+  .indice li a { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: center; min-height: 52px; padding: 8px 0; border-bottom: 1px solid var(--linea); text-decoration: none; line-height: 1.3; }
+  .num { display: grid; place-items: center; width: 36px; height: 30px; background: #fff; border: 1.5px solid var(--nero); box-shadow: inset 0 7px 0 var(--sentiero), inset 0 -7px 0 var(--sentiero); font-family: "Barlow Semi Condensed", sans-serif; font-weight: 800; font-size: 14px; line-height: 1; font-variant-numeric: tabular-nums; flex: none; }
+
+  /* Le schede: nascoste finché non si tocca una bandierina */
+  .scheda { display: none; }
+  .scheda:target { display: block; position: fixed; inset: 0; z-index: 10; overflow-y: auto; background: var(--carta); }
+  .scheda > div { max-width: 430px; margin: 0 auto; padding: 0 16px 48px; }
+  .scheda-barra { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; margin: 0 -16px; padding: 6px 16px; background: var(--carta); border-bottom: 2px solid var(--blu); color: var(--blu); font-size: 15px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .scheda-barra span { color: var(--tenue); }
+  .indietro { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; }
+  .indietro svg { width: 18px; height: 18px; }
+  .scheda-testa { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+  .scheda-testa h2 { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 800; font-size: 26px; line-height: 1.1; letter-spacing: 0.02em; text-transform: uppercase; text-wrap: balance; color: var(--blu); }
+  .domanda { margin-top: 12px; font-family: "Source Serif 4", serif; font-style: italic; font-size: 18px; line-height: 1.45; color: var(--tenue); }
+  .messaggio { margin-top: 20px; font-size: 21px; line-height: 1.35; font-weight: 700; }
+  .grafico { margin-top: 12px; }
+  .grafico h3 { margin: 24px 0 0; font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tenue); }
+  .dato { margin-top: 14px; }
+  .dato p { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 16px; line-height: 1.3; }
+  .dato b { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* Barra: una per ogni risposta. --p è la percentuale: quante volte è stata data
+     quella risposta, diviso tutte le risposte a quella domanda, arrotondato per difetto.
+     data-risposte, sul blocco .dato, conserva il conteggio preso da Tabella Pulita. */
+  .barra { margin-top: 6px; height: 14px; background: linear-gradient(90deg, var(--azzurro) calc(var(--p) * 1%), var(--vuoto) 0); }
+  /* "Non so": barra tratteggiata, mai solo un colore diverso */
+  .barra.nonso { background: linear-gradient(90deg, transparent calc(var(--p) * 1%), var(--vuoto) 0), repeating-linear-gradient(135deg, var(--tenue) 0 2px, #fff 2px 5px); }
+  .vuoto { margin-top: 20px; padding: 16px; border: 1.5px dashed var(--linea); color: var(--tenue); }
+  .scheda-piede { display: flex; justify-content: space-between; gap: 12px; margin-top: 36px; padding-top: 8px; border-top: 1px solid var(--linea); font-size: 16px; font-weight: 700; }
+  .scheda-piede a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blu); }
+
+  /* PDF: la mappa resta in cima come indice, poi tutte le schede in fila */
+  @media print {
+    .linguette, .scheda-barra, .scheda-piede { display: none; }
+    body { background: #fff; }
+    .pagina { max-width: none; padding: 0; }
+    .scheda, .scheda:target { display: block; position: static; overflow: visible; break-before: page; }
+    .riquadro, .dato { break-inside: avoid; }
+    .indice li a { text-decoration: none; }
+    .fascia, .barra, .num, .linguette a.attiva { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="pagina" id="sentiero">
+  <!-- Fascia del progetto: il disegno d'erba è decorativo, il nome è testo vero -->
+  <p class="fascia cond"><img src="loghi/erba_presinmed.png" alt="" width="400" height="279"><span>PRESINMED</span></p>
+
+  <!-- Loghi, presi dal roll-up del progetto: sopra i due principali, sotto i partner -->
+  <div class="loghi" role="group" aria-label="Loghi del progetto">
+    <div>
+      <img class="logo-molise" src="loghi/logo_unimol_testo.png" alt="Università degli Studi del Molise" width="512" height="250">
+      <img class="logo-envixlab" src="loghi/logo_envixlab.png" alt="EnviXLab" width="800" height="345">
+    </div>
+    <div class="partner">
+      <img class="logo-biodiversa" src="loghi/logo_biodiversa.png" alt="Biodiversa+" width="800" height="205">
+      <img class="logo-parco" src="loghi/logo_parco_maiella.png" alt="Parco Nazionale della Maiella" width="446" height="800">
+      <img class="logo-geopark" src="loghi/logo_geopark.png" alt="Maiella Geopark" width="744" height="384">
+      <img class="logo-granada" src="loghi/logo_granada.png" alt="Universidad de Granada" width="800" height="753">
+    </div>
+  </div>
+
+  <header class="cartiglio cond">
+    <h1>Praterie altomontane<br>della Maiella</h1>
+    <p class="sotto">Saperi ed usi raccontati da 15 protagonisti del territorio</p>
+    <p class="progetto">Presinmed · Parco Nazionale della Maiella</p>
+  </header>
+
+  <nav class="linguette cond" aria-label="Parti della pagina">
+    <a class="attiva" href="#sentiero" aria-current="page">Le interviste</a>
+    <a href="#workshop">Il workshop</a>
+  </nav>
+
+  <figure class="riquadro">
+    <svg viewBox="0 0 362 646" width="362" height="646" role="group" aria-label="Il sentiero delle 23 domande, dalla partenza alla cima">
+      <!-- Le tre fasce, una per tappa: dall'alto tappa 1, 2, 3.
+           Si legge scorrendo verso il basso: in alto la partenza, in fondo la cima. -->
+      <rect class="tappa-1" x="0" y="0" width="362" height="156"/>
+      <rect class="tappa-2" x="0" y="156" width="362" height="272"/>
+      <rect class="tappa-3" x="0" y="428" width="362" height="218"/>
+      <path class="confine" d="M0 156 H362 M0 428 H362"/>
+      <text class="nome-tappa" x="346" y="20" text-anchor="end">TAPPA 1 · CHI SIETE</text>
+      <text class="nome-tappa" x="346" y="170" text-anchor="end">TAPPA 2 · USI E SAPERI</text>
+      <text class="nome-tappa" x="346" y="442" text-anchor="end">TAPPA 3 · COSA CAMBIA</text>
+
+      <!-- La partenza: il paese, da dove parte il sentiero -->
+      <g class="segno"><rect x="8" y="35" width="7" height="7"/><rect x="17" y="30" width="6" height="6"/><rect x="6" y="26" width="6" height="6"/></g>
+      <text class="paese" x="8" y="18">PARTENZA</text>
+
+      <!-- Il sentiero a tornanti: prima una riga bianca sotto, poi il tratteggio rosso -->
+      <path class="traccia-fondo" d="M24 34 L40 46 L322 62 A26 26 0 0 1 322 114 L40 130 A26 26 0 0 0 40 182 L322 198 A26 26 0 0 1 322 250 L40 266 A26 26 0 0 0 40 318 L322 334 A26 26 0 0 1 322 386 L40 402 A26 26 0 0 0 40 454 L322 470 A26 26 0 0 1 322 522 L40 538 A26 26 0 0 0 40 590 L322 606"/>
+      <path class="traccia" d="M24 34 L40 46 L322 62 A26 26 0 0 1 322 114 L40 130 A26 26 0 0 0 40 182 L322 198 A26 26 0 0 1 322 250 L40 266 A26 26 0 0 0 40 318 L322 334 A26 26 0 0 1 322 386 L40 402 A26 26 0 0 0 40 454 L322 470 A26 26 0 0 1 322 522 L40 538 A26 26 0 0 0 40 590 L322 606"/>
+
+      <!-- In fondo, la cima: il workshop -->
+      <a class="cima" href="#workshop" aria-label="Il workshop del 24 novembre">
+        <rect class="tocco" x="180" y="588" width="170" height="52"/>
+        <path class="segno" d="M310 612 L322 590 L334 612 Z"/>
+        <text x="304" y="630" text-anchor="end">IL WORKSHOP · 24/11</text>
+      </a>
+
+      <!-- Le 23 bandierine. Ognuna porta alla sua scheda (#d1, #d2...).
+           Il rettangolo "tocco" è l'area da toccare, 48 x 44 px. -->
+      <a class="bandiera" href="#d1" aria-label="Domanda 1: chi ha risposto"><g transform="translate(87 49)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">1</text></g></a>
+      <a class="bandiera" href="#d2" aria-label="Domanda 2: il legame con la Maiella"><g transform="translate(181 54)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">2</text></g></a>
+      <a class="bandiera" href="#d3" aria-label="Domanda 3: cos'è una prateria"><g transform="translate(275 59)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">3</text></g></a>
+      <a class="bandiera" href="#d4" aria-label="Domanda 4: naturale o modificata dall'uomo"><g transform="translate(275 117)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">4</text></g></a>
+      <a class="bandiera" href="#d5" aria-label="Domanda 5: per cosa sono state tradizionalmente utilizzate"><g transform="translate(181 122)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">5</text></g></a>
+      <a class="bandiera" href="#d6" aria-label="Domanda 6: il pascolo nel passato"><g transform="translate(87 185)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">6</text></g></a>
+      <a class="bandiera" href="#d7" aria-label="Domanda 7: l'acqua in montagna"><g transform="translate(181 190)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">7</text></g></a>
+      <a class="bandiera" href="#d8" aria-label="Domanda 8: la gestione del suolo"><g transform="translate(275 195)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">8</text></g></a>
+      <a class="bandiera" href="#d9" aria-label="Domanda 9: le piante dei pascoli"><g transform="translate(275 253)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">9</text></g></a>
+      <a class="bandiera" href="#d10" aria-label="Domanda 10: cosa ha lasciato l'allevamento"><g transform="translate(181 258)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">10</text></g></a>
+      <a class="bandiera" href="#d11" aria-label="Domanda 11: la capacità di carico delle praterie"><g transform="translate(87 263)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">11</text></g></a>
+      <a class="bandiera" href="#d12" aria-label="Domanda 12: selvatici e domestici"><g transform="translate(87 321)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">12</text></g></a>
+      <a class="bandiera" href="#d13" aria-label="Domanda 13: il bestiame di ieri e di oggi"><g transform="translate(181 326)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">13</text></g></a>
+      <a class="bandiera" href="#d14" aria-label="Domanda 14: come è cambiato l'allevamento"><g transform="translate(275 331)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">14</text></g></a>
+      <a class="bandiera" href="#d15" aria-label="Domanda 15: di chi sono le praterie"><g transform="translate(275 389)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">15</text></g></a>
+      <a class="bandiera" href="#d16" aria-label="Domanda 16: l'ecoturismo"><g transform="translate(181 394)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">16</text></g></a>
+      <a class="bandiera" href="#d17" aria-label="Domanda 17: cosa è cambiato"><g transform="translate(87 457)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">17</text></g></a>
+      <a class="bandiera" href="#d18" aria-label="Domanda 18: allevamento e tutela"><g transform="translate(181 462)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">18</text></g></a>
+      <a class="bandiera" href="#d19" aria-label="Domanda 19: svago e impatti"><g transform="translate(275 467)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">19</text></g></a>
+      <a class="bandiera" href="#d20" aria-label="Domanda 20: pascolo e attività ricreative"><g transform="translate(275 525)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">20</text></g></a>
+      <a class="bandiera" href="#d21" aria-label="Domanda 21: svago e regole del parco"><g transform="translate(181 530)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">21</text></g></a>
+      <a class="bandiera" href="#d22" aria-label="Domanda 22: il clima e le pratiche tradizionali"><g transform="translate(87 535)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">22</text></g></a>
+      <a class="bandiera" href="#d23" aria-label="Domanda 23: il clima e le attività ricreative"><g transform="translate(87 593)"><rect class="tocco" x="-24" y="-22" width="48" height="44"/><rect class="fondo" x="-18" y="-15" width="36" height="30"/><rect class="rosso" x="-18" y="-15" width="36" height="7"/><rect class="rosso" x="-18" y="8" width="36" height="7"/><rect class="bordo" x="-18" y="-15" width="36" height="30"/><text y="5">23</text></g></a>
+    </svg>
+  </figure>
+
+  <section class="indice" aria-labelledby="indice-titolo">
+    <h2 id="indice-titolo">Le 23 domande</h2>
+    <h3>Tappa 1: chi siete e cosa sono le praterie</h3>
+    <ol>
+      <li><a href="#d1"><span class="num">1</span>Chi ha risposto</a></li>
+      <li><a href="#d2"><span class="num">2</span>Il legame con la Maiella</a></li>
+      <li><a href="#d3"><span class="num">3</span>Cos'è una prateria</a></li>
+      <li><a href="#d4"><span class="num">4</span>Naturale o modificata dall'uomo</a></li>
+      <li><a href="#d5"><span class="num">5</span>Per cosa sono state tradizionalmente utilizzate</a></li>
+    </ol>
+    <h3>Tappa 2: usi di un tempo e saperi locali</h3>
+    <ol>
+      <li><a href="#d6"><span class="num">6</span>Il pascolo nel passato</a></li>
+      <li><a href="#d7"><span class="num">7</span>L'acqua in montagna</a></li>
+      <li><a href="#d8"><span class="num">8</span>La gestione del suolo</a></li>
+      <li><a href="#d9"><span class="num">9</span>Le piante dei pascoli</a></li>
+      <li><a href="#d10"><span class="num">10</span>Cosa ha lasciato l'allevamento</a></li>
+      <li><a href="#d11"><span class="num">11</span>La capacità di carico delle praterie</a></li>
+      <li><a href="#d12"><span class="num">12</span>Selvatici e domestici</a></li>
+      <li><a href="#d13"><span class="num">13</span>Il bestiame di ieri e di oggi</a></li>
+      <li><a href="#d14"><span class="num">14</span>Come è cambiato l'allevamento</a></li>
+      <li><a href="#d15"><span class="num">15</span>Di chi sono le praterie</a></li>
+      <li><a href="#d16"><span class="num">16</span>L'ecoturismo</a></li>
+    </ol>
+    <h3>Tappa 3: cosa sta cambiando</h3>
+    <ol>
+      <li><a href="#d17"><span class="num">17</span>Cosa è cambiato</a></li>
+      <li><a href="#d18"><span class="num">18</span>Allevamento e tutela</a></li>
+      <li><a href="#d19"><span class="num">19</span>Svago e impatti</a></li>
+      <li><a href="#d20"><span class="num">20</span>Pascolo e attività ricreative</a></li>
+      <li><a href="#d21"><span class="num">21</span>Svago e regole del parco</a></li>
+      <li><a href="#d22"><span class="num">22</span>Il clima e le pratiche tradizionali</a></li>
+      <li><a href="#d23"><span class="num">23</span>Il clima e le attività ricreative</a></li>
+    </ol>
+  </section>
+</div>
+
+<!-- ============ LE SCHEDE ============
+     Ogni scheda ha un id (d1, d2...). Si apre quando l'indirizzo finisce con #d1, #d2...
+     "Torna al sentiero" riporta a #sentiero e la scheda si chiude. -->
+
+<section class="scheda" id="d1" aria-labelledby="t1"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 1</span></div>
+  <div class="scheda-testa"><span class="num">1</span><h2 id="t1">Chi ha risposto</h2></div>
+  <p class="domanda">Età? Professione o attività principale?</p>
+  <p class="messaggio">Più della metà delle persone intervistate ha più di 60 anni.</p>
+  <div class="grafico">
+    <h3 class="cond">Età</h3>
+    <div class="dato" data-risposte="1"><p><span>30-40 anni</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>40-50 anni</span><b>20%</b></p><div class="barra" style="--p:20" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>50-60 anni</span><b>20%</b></p><div class="barra" style="--p:20" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Oltre 60 anni</span><b>53%</b></p><div class="barra" style="--p:53" aria-hidden="true"></div></div>
+    <h3 class="cond">Ambito di lavoro</h3>
+    <div class="dato" data-risposte="8"><p><span>Amministrativo e di controllo</span><b>47%</b></p><div class="barra" style="--p:47" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="4"><p><span>Scientifico</span><b>23%</b></p><div class="barra" style="--p:23" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>Turistico-ricettivo</span><b>17%</b></p><div class="barra" style="--p:17" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Zootecnico</span><b>11%</b></p><div class="barra" style="--p:11" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><span></span><a href="#d2">Domanda 2</a></nav>
+</div></section>
+
+<section class="scheda" id="d2" aria-labelledby="t2"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 1</span></div>
+  <div class="scheda-testa"><span class="num">2</span><h2 id="t2">Il legame con la Maiella</h2></div>
+  <p class="domanda">Che tipo di relazione hai con la Maiella? Da quanto tempo dura questa relazione?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <h3 class="cond">Tipo di relazione</h3>
+    <div class="dato" data-risposte="9"><p><span>Dalla nascita con stretto legame intimo</span><b>45%</b></p><div class="barra" style="--p:45" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Relazione lavorativa</span><b>40%</b></p><div class="barra" style="--p:40" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>Relazione ricreativa</span><b>15%</b></p><div class="barra" style="--p:15" aria-hidden="true"></div></div>
+    <h3 class="cond">Da quanto tempo</h3>
+    <div class="dato" data-risposte="4"><p><span>Da meno di 10 anni</span><b>26%</b></p><div class="barra" style="--p:26" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Da 10 a 20 anni</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Da 20 a 30 anni</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Da più di 30 anni</span><b>53%</b></p><div class="barra" style="--p:53" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d1">Domanda 1</a><a href="#d3">Domanda 3</a></nav>
+</div></section>
+
+<section class="scheda" id="d3" aria-labelledby="t3"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 1</span></div>
+  <div class="scheda-testa"><span class="num">3</span><h2 id="t3">Cos'è una prateria</h2></div>
+  <p class="domanda">Come descriveresti una prateria umida da un punto di vista ecologico e culturale?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="2"><p><span>Un ambiente fragile e soggetto a continui cambiamenti</span><b>11%</b></p><div class="barra" style="--p:11" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Un ambiente prativo ricco di biodiversità, ascrivibile ad habitat tutelati</span><b>44%</b></p><div class="barra" style="--p:44" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>Un ambiente fondamentale per la cultura pastorale e per l'economia di un tempo</span><b>38%</b></p><div class="barra" style="--p:38" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>5%</b></p><div class="barra nonso" style="--p:5" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d2">Domanda 2</a><a href="#d4">Domanda 4</a></nav>
+</div></section>
+
+<section class="scheda" id="d4" aria-labelledby="t4"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 1</span></div>
+  <div class="scheda-testa"><span class="num">4</span><h2 id="t4">Naturale o modificata dall'uomo</h2></div>
+  <p class="domanda">È un ambiente naturale? Che ruolo hanno avuto le popolazioni locali nella sua creazione o nel suo mantenimento?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <h3 class="cond">È un ambiente naturale?</h3>
+    <div class="dato" data-risposte="5"><p><span>Sì, è naturale e selvaggio</span><b>23%</b></p><div class="barra" style="--p:23" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="9"><p><span>No, non è del tutto naturale, ma è dovuta al pascolo</span><b>42%</b></p><div class="barra" style="--p:42" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="6"><p><span>Dipende dalla quota</span><b>28%</b></p><div class="barra" style="--p:28" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>4%</b></p><div class="barra nonso" style="--p:4" aria-hidden="true"></div></div>
+    <h3 class="cond">Il ruolo delle popolazioni locali</h3>
+    <div class="dato" data-risposte="10"><p><span>Sì, hanno avuto un ruolo nella creazione e nel mantenimento</span><b>66%</b></p><div class="barra" style="--p:66" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="4"><p><span>Hanno avuto un ruolo nel solo mantenimento</span><b>26%</b></p><div class="barra" style="--p:26" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>No, non hanno avuto nessun ruolo</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d3">Domanda 3</a><a href="#d5">Domanda 5</a></nav>
+</div></section>
+
+<section class="scheda" id="d5" aria-labelledby="t5"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 1</span></div>
+  <div class="scheda-testa"><span class="num">5</span><h2 id="t5">Per cosa sono state tradizionalmente utilizzate</h2></div>
+  <p class="domanda">Esistono usi attuali e/o tradizionali delle praterie umide? Per cosa è stata tradizionalmente utilizzata?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="2"><p><span>Sì, esistono e non sono cambiati per nulla rispetto al passato</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="12"><p><span>Sì, esistono, ma sono in parte cambiati rispetto al passato (è subentrata l'attività turistico-ricreativa: sci e/o escursionismo). In passato era utilizzata per il pascolo, sfalcio, raccolta fieno ed erbe, agricoltura, caccia</span><b>80%</b></p><div class="barra" style="--p:80" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Oggi c'è la sola attività turistico-ricreativa: sci e/o escursionismo. Non esistono attualmente. In passato era utilizzata per il pascolo, sfalcio, raccolta fieno ed erbe, agricoltura, caccia</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d4">Domanda 4</a><a href="#d6">Domanda 6</a></nav>
+</div></section>
+
+<section class="scheda" id="d6" aria-labelledby="t6"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">6</span><h2 id="t6">Il pascolo nel passato</h2></div>
+  <p class="domanda">Il pascolo è stato gestito storicamente da pastori? In che modo è stato storicamente gestito il pascolo di pecore, capre e bovini?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="12"><p><span>Il pascolo è stato gestito. I pastori praticavano la monticazione e/o la transumanza.</span><b>57%</b></p><div class="barra" style="--p:57" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>Il pascolo di alta quota è stato gestito dai Comuni e dagli enti preposti con concessioni (o bandi) ai pastori; a più bassa quota la gestione era affidata ai pastori e ai privati.</span><b>33%</b></p><div class="barra" style="--p:33" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Il pascolo è sempre stato gestito, ma non so i dettagli</span><b>9%</b></p><div class="barra" style="--p:9" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d5">Domanda 5</a><a href="#d7">Domanda 7</a></nav>
+</div></section>
+
+<section class="scheda" id="d7" aria-labelledby="t7"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">7</span><h2 id="t7">L'acqua in montagna</h2></div>
+  <p class="domanda">In che modo l'acqua di montagna veniva gestita in passato? La forma di laghi o corsi d'acqua nell'area di studio è naturale? Sono presenti fossi, canali o altre infrastrutture idriche?</p>
+  <p class="messaggio">In quota l'acqua è sempre stata poca: per questo si facevano fontanili e canali.</p>
+  <div class="grafico">
+    <div class="dato" data-risposte="13"><p><span>L'acqua in quota è sempre stata una risorsa scarsa, quindi veniva gestita con opere di captazione per la realizzazione di fontanili e canali.</span><b>61%</b></p><div class="barra" style="--p:61" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="6"><p><span>La presenza di laghi naturali è limitata al periodo primaverile, dovuto allo scioglimento delle nevi; spesso queste acque e anche acque di stillicidio venivano canalizzate per avere punti di abbeveraggio</span><b>28%</b></p><div class="barra" style="--p:28" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Non so</span><b>9%</b></p><div class="barra nonso" style="--p:9" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d6">Domanda 6</a><a href="#d8">Domanda 8</a></nav>
+</div></section>
+
+<section class="scheda" id="d8" aria-labelledby="t8"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">8</span><h2 id="t8">La gestione del suolo</h2></div>
+  <p class="domanda">In che modo il suolo è stato gestito (pulizia, sfalcio o disboscamento, fertilizzazione)?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="9"><p><span>Il suolo è stato gestito con azioni "naturali" di disboscamento (anche tramite l'azione del fuoco), sfalcio, fertilizzazione naturale</span><b>60%</b></p><div class="barra" style="--p:60" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="6"><p><span>Il suolo è stato gestito solo in parte</span><b>40%</b></p><div class="barra" style="--p:40" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d7">Domanda 7</a><a href="#d9">Domanda 9</a></nav>
+</div></section>
+
+<section class="scheda" id="d9" aria-labelledby="t9"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">9</span><h2 id="t9">Le piante dei pascoli</h2></div>
+  <p class="domanda">In che modo sono state utilizzate le piante dei pascoli?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="11"><p><span>Sono state utilizzate per l'alimentazione umana e animale e a scopo officinale e liquoristico</span><b>73%</b></p><div class="barra" style="--p:73" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>Sono state utilizzate solo per l'alimentazione animale</span><b>20%</b></p><div class="barra" style="--p:20" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d8">Domanda 8</a><a href="#d10">Domanda 10</a></nav>
+</div></section>
+
+<section class="scheda" id="d10" aria-labelledby="t10"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">10</span><h2 id="t10">Cosa ha lasciato l'allevamento</h2></div>
+  <p class="domanda">Che impatto hanno avuto gli usi tradizionali (allevamento, zootecnia) sui pascoli d'alta montagna?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="7"><p><span>L'ambiente è stato plasmato da questi usi</span><b>43%</b></p><div class="barra" style="--p:43" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>L'ambiente è stato parzialmente modificato da questi usi</span><b>43%</b></p><div class="barra" style="--p:43" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non hanno avuto impatto</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d9">Domanda 9</a><a href="#d11">Domanda 11</a></nav>
+</div></section>
+
+<section class="scheda" id="d11" aria-labelledby="t11"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">11</span><h2 id="t11">La capacità di carico delle praterie</h2></div>
+  <p class="domanda">Quale capacità di carico ritieni abbia la prateria umida rispetto alle pressioni esercitate, ad esempio, dal bestiame o dal turismo montano?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="6"><p><span>Un'alta capacità di carico, visto che il bestiame al pascolo non è troppo numeroso ed il turismo non è massivo</span><b>35%</b></p><div class="barra" style="--p:35" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Una bassa capacità di carico, tollerando poco il pascolo del bestiame e la presenza turistica</span><b>5%</b></p><div class="barra" style="--p:5" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Dipende dalla prateria in esame</span><b>47%</b></p><div class="barra" style="--p:47" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Non so</span><b>11%</b></p><div class="barra nonso" style="--p:11" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d10">Domanda 10</a><a href="#d12">Domanda 12</a></nav>
+</div></section>
+
+<section class="scheda" id="d12" aria-labelledby="t12"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">12</span><h2 id="t12">Selvatici e domestici</h2></div>
+  <p class="domanda">Che tipo di interazione esiste tra erbivori selvatici e domestici?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="4"><p><span>Esiste sia indirettamente che direttamente (antibiotico resistenza, competizione alimentare)</span><b>26%</b></p><div class="barra" style="--p:26" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="6"><p><span>Non esiste</span><b>40%</b></p><div class="barra" style="--p:40" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="4"><p><span>Esiste limitatamente solo in alcune zone</span><b>26%</b></p><div class="barra" style="--p:26" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d11">Domanda 11</a><a href="#d13">Domanda 13</a></nav>
+</div></section>
+
+<section class="scheda" id="d13" aria-labelledby="t13"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">13</span><h2 id="t13">Il bestiame di ieri e di oggi</h2></div>
+  <p class="domanda">Quali tipologie di bestiame erano presenti in passato? Ed oggi?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="8"><p><span>Le stesse sia ieri che oggi: ovini, caprini e bovini a seconda delle zone e delle praterie</span><b>53%</b></p><div class="barra" style="--p:53" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Oggi non ci sono più animali al pascolo</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="5"><p><span>Le stesse sia ieri che oggi, ma con un aumento di bovini ed equini</span><b>33%</b></p><div class="barra" style="--p:33" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d12">Domanda 12</a><a href="#d14">Domanda 14</a></nav>
+</div></section>
+
+<section class="scheda" id="d14" aria-labelledby="t14"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">14</span><h2 id="t14">Come è cambiato l'allevamento</h2></div>
+  <p class="domanda">Quali cambiamenti storici si sono verificati nel tipo di bestiame, nel numero di capi o nelle modalità di gestione? Conosci fonti di dati o statistiche che possano essere utili?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="3"><p><span>Sono cambiate sia le tipologie, che il numero di capi, che la gestione</span><b>20%</b></p><div class="barra" style="--p:20" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="8"><p><span>Non sono cambiate le tipologie, né la gestione, ma sono cambiati i numeri</span><b>53%</b></p><div class="barra" style="--p:53" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Sono cambiate le razze ed i numeri, ma non la gestione</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Non so</span><b>13%</b></p><div class="barra nonso" style="--p:13" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d13">Domanda 13</a><a href="#d15">Domanda 15</a></nav>
+</div></section>
+
+<section class="scheda" id="d15" aria-labelledby="t15"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">15</span><h2 id="t15">Di chi sono le praterie</h2></div>
+  <p class="domanda">Qual è il regime di proprietà delle praterie umide (ad es. pubblica o privata)? Come vengono attualmente gestite, chi può utilizzarle e in che modo?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <h3 class="cond">Di chi sono</h3>
+    <div class="dato" data-risposte="1"><p><span>Sono pubbliche</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Sono private</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="12"><p><span>Dipende dalla quota o da altro</span><b>80%</b></p><div class="barra" style="--p:80" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+    <h3 class="cond">Come vengono gestite</h3>
+    <div class="dato" data-risposte="7"><p><span>Quelle demaniali sono gestite dai Comuni che le affidano tramite asta</span><b>46%</b></p><div class="barra" style="--p:46" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non sono gestite</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>Non so</span><b>46%</b></p><div class="barra nonso" style="--p:46" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d14">Domanda 14</a><a href="#d16">Domanda 16</a></nav>
+</div></section>
+
+<section class="scheda" id="d16" aria-labelledby="t16"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 2</span></div>
+  <div class="scheda-testa"><span class="num">16</span><h2 id="t16">L'ecoturismo</h2></div>
+  <p class="domanda">Nell'area vengono proposte attività di ecoturismo particolari, come osservazione della fauna, avventura, turismo rurale o geoturismo? Se sì, da chi vengono organizzate?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="14"><p><span>Sì, da realtà locali per lo più, dai Carabinieri Forestali, da guide locali e non, dal C.A.I.</span><b>93%</b></p><div class="barra" style="--p:93" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d15">Domanda 15</a><a href="#d17">Domanda 17</a></nav>
+</div></section>
+
+<section class="scheda" id="d17" aria-labelledby="t17"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">17</span><h2 id="t17">Cosa è cambiato</h2></div>
+  <p class="domanda">Quali cambiamenti negli usi dei pascoli d'alta montagna hai osservato negli ultimi decenni (ad es. negli ultimi 20-50 anni)? Quali attività si stanno sviluppando attualmente?</p>
+  <p class="messaggio">Quasi tutti hanno visto diminuire l'uso dei pascoli negli ultimi decenni.</p>
+  <div class="grafico">
+    <div class="dato" data-risposte="3"><p><span>La prateria ha subìto un cambiamento nella composizione floristica e la diminuzione di animali al pascolo favorisce l'inarbustamento della prateria secondaria</span><b>16%</b></p><div class="barra" style="--p:16" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="14"><p><span>L'uso delle praterie è diminuito enormemente rispetto al passato, ma è in ogni modo destinato al pascolo e al turismo</span><b>77%</b></p><div class="barra" style="--p:77" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non ci sono stati cambiamenti rispetto al passato</span><b>5%</b></p><div class="barra" style="--p:5" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d16">Domanda 16</a><a href="#d18">Domanda 18</a></nav>
+</div></section>
+
+<section class="scheda" id="d18" aria-labelledby="t18"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">18</span><h2 id="t18">Allevamento e tutela</h2></div>
+  <p class="domanda">Come si concilia l'allevamento del bestiame con le regole e gli obiettivi di conservazione della zona protetta?</p>
+  <p class="messaggio">Per 12 persone su 15 pascolo e tutela vanno d'accordo, se il pascolo è gestito con attenzione.</p>
+  <div class="grafico">
+    <div class="dato" data-risposte="12"><p><span>Si conciliano bene, la conservazione delle praterie è legata al pascolo del bestiame, ma solo tramite una gestione attenta</span><b>75%</b></p><div class="barra" style="--p:75" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Si conciliano solo in parte e dipende dai singoli casi</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>Non so</span><b>18%</b></p><div class="barra nonso" style="--p:18" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d17">Domanda 17</a><a href="#d19">Domanda 19</a></nav>
+</div></section>
+
+<section class="scheda" id="d19" aria-labelledby="t19"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">19</span><h2 id="t19">Svago e impatti</h2></div>
+  <p class="domanda">Quali sono le attività ricreative più comuni nella zona? Quale impatto hanno le attività ricreative sui pascoli d'alta montagna?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="6"><p><span>Escursionismo, cicloturismo, ippoturismo a basso impatto</span><b>37%</b></p><div class="barra" style="--p:37" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>Escursionismo, cicloturismo, ippoturismo ad impatto diverso a seconda delle zone (a volte basso a volte più elevato in alcune zone)</span><b>43%</b></p><div class="barra" style="--p:43" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="3"><p><span>Turismo legato alla neve a basso o medio impatto</span><b>18%</b></p><div class="barra" style="--p:18" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d18">Domanda 18</a><a href="#d20">Domanda 20</a></nav>
+</div></section>
+
+<section class="scheda" id="d20" aria-labelledby="t20"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">20</span><h2 id="t20">Pascolo e attività ricreative</h2></div>
+  <p class="domanda">In che modo l'allevamento del bestiame e le attività ricreative interagiscono? Possono coesistere senza problemi?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="9"><p><span>Possono coesistere senza problemi</span><b>60%</b></p><div class="barra" style="--p:60" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non possono coesistere perché la presenza del bestiame può essere rischiosa in termini di sicurezza</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="5"><p><span>Possono coesistere, ma solo nel rispetto delle regole (gregge custodito e turista educato) per questioni di sicurezza</span><b>33%</b></p><div class="barra" style="--p:33" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d19">Domanda 19</a><a href="#d21">Domanda 21</a></nav>
+</div></section>
+
+<section class="scheda" id="d21" aria-labelledby="t21"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">21</span><h2 id="t21">Svago e regole del parco</h2></div>
+  <p class="domanda">In che modo le attività ricreative interagiscono con le regole e gli obiettivi di conservazione dell'area protetta?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="6"><p><span>Le attività ricreative, se rispettose delle regole del Piano del Parco, hanno generalmente un basso impatto</span><b>40%</b></p><div class="barra" style="--p:40" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Interferiscono e quindi è necessario il compromesso</span><b>6%</b></p><div class="barra" style="--p:6" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="7"><p><span>Le attività ricreative hanno un impatto diverso a seconda della zona ed è necessario il controllo</span><b>46%</b></p><div class="barra" style="--p:46" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="1"><p><span>Non so</span><b>6%</b></p><div class="barra nonso" style="--p:6" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d20">Domanda 20</a><a href="#d22">Domanda 22</a></nav>
+</div></section>
+
+<section class="scheda" id="d22" aria-labelledby="t22"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">22</span><h2 id="t22">Il clima e le pratiche tradizionali</h2></div>
+  <p class="domanda">In che modo il cambiamento climatico sta influenzando le pratiche tradizionali, come il pascolo o la gestione dell'acqua?</p>
+  <p class="messaggio">Il clima sta influenzando le pratiche tradizionali: per 5 persone moltissimo, per 9 in parte.</p>
+  <div class="grafico">
+    <div class="dato" data-risposte="5"><p><span>Il cambiamento climatico influisce enormente</span><b>31%</b></p><div class="barra" style="--p:31" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="9"><p><span>Il cambiamento climatico influisce solo in parte</span><b>56%</b></p><div class="barra" style="--p:56" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Non so</span><b>12%</b></p><div class="barra nonso" style="--p:12" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d21">Domanda 21</a><a href="#d23">Domanda 23</a></nav>
+</div></section>
+
+<section class="scheda" id="d23" aria-labelledby="t23"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Tappa 3</span></div>
+  <div class="scheda-testa"><span class="num">23</span><h2 id="t23">Il clima e le attività ricreative</h2></div>
+  <p class="domanda">In che modo il cambiamento climatico sta influenzando le attività ricreative nelle zone di alta quota?</p>
+  <!-- Frase chiave: da scrivere -->
+  <div class="grafico">
+    <div class="dato" data-risposte="5"><p><span>Il cambiamento climatico influisce enormente</span><b>33%</b></p><div class="barra" style="--p:33" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="6"><p><span>Il cambiamento climatico influisce solo in parte</span><b>40%</b></p><div class="barra" style="--p:40" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Il cambiamento climatico non influisce</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
+    <div class="dato" data-risposte="2"><p><span>Non so</span><b>13%</b></p><div class="barra nonso" style="--p:13" aria-hidden="true"></div></div>
+  </div>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d22">Domanda 22</a><a href="#workshop">Il workshop</a></nav>
+</div></section>
+
+<section class="scheda" id="workshop" aria-labelledby="tw"><div>
+  <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Dal 24/11</span></div>
+  <div class="scheda-testa"><h2 id="tw">Il workshop</h2></div>
+  <p class="domanda">24 novembre 2026</p>
+  <p class="vuoto">Dopo il workshop qui trovi i problemi emersi dalle interviste e, per ognuno, la soluzione basata sulla natura (NBS) scelta dal gruppo.</p>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d23">Domanda 23</a><span></span></nav>
+</div></section>
+</body>
+</html>
