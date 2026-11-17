@@ -97,6 +97,16 @@
   .indice li a { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: center; min-height: 52px; padding: 8px 0; border-bottom: 1px solid var(--linea); text-decoration: none; line-height: 1.3; }
   .num { display: grid; place-items: center; width: 36px; height: 30px; background: #fff; border: 1.5px solid var(--nero); box-shadow: inset 0 7px 0 var(--sentiero), inset 0 -7px 0 var(--sentiero); font-family: "Barlow Semi Condensed", sans-serif; font-weight: 800; font-size: 14px; line-height: 1; font-variant-numeric: tabular-nums; flex: none; }
 
+  /* Bottone in fondo: scarica il PDF già pronto (presinmed.pdf, accanto a index.html).
+     Il PDF si rigenera dalla pagina con la stampa del browser, vedi @media print più sotto. */
+  .esporta { margin: 32px 12px 0; }
+  .esporta a { display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 16px; border: 2px solid var(--blu); background: var(--blu); color: #fff; text-decoration: none; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .esporta a:hover { background: #fff; color: var(--blu); }
+
+  /* Workshop: nascosto fino al 24/11. Per riattivarlo basta togliere la classe "in-arrivo"
+     da questi quattro punti: la linguetta, la cima del sentiero, il link in fondo alla scheda 23 e la scheda del workshop. */
+  .in-arrivo { display: none !important; }
+
   /* Le schede: nascoste finché non si tocca una bandierina */
   .scheda { display: none; }
   .scheda:target { display: block; position: fixed; inset: 0; z-index: 10; overflow-y: auto; background: var(--carta); }
@@ -126,10 +136,15 @@
   .scheda-piede a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blu); }
 
   /* PDF: la mappa resta in cima come indice, poi tutte le schede in fila */
+  @page { size: A4; margin: 10mm; }
   @media print {
-    .linguette, .scheda-barra, .scheda-piede { display: none; }
+    .linguette, .scheda-barra, .scheda-piede, .esporta { display: none; }
     body { background: #fff; }
-    .pagina { max-width: none; padding: 0; }
+    /* Stessa larghezza del telefono: così intestazione e mappa stanno insieme nella prima pagina */
+    .pagina { max-width: 430px; padding: 0; }
+    .indice { break-before: page; }
+    /* Mappa un po' più stretta: con intestazione e loghi sta tutta nella prima pagina */
+    .riquadro { max-width: 330px; margin: 0 auto; }
     .scheda, .scheda:target { display: block; position: static; overflow: visible; break-before: page; }
     .riquadro, .dato { break-inside: avoid; }
     .indice li a { text-decoration: none; }
@@ -162,7 +177,7 @@
     <p class="progetto">Presinmed · Parco Nazionale della Maiella</p>
   </header>
 
-  <nav class="linguette cond" aria-label="Parti della pagina">
+  <nav class="linguette in-arrivo cond" aria-label="Parti della pagina">
     <a class="attiva" href="#sentiero" aria-current="page">Le interviste</a>
     <a href="#workshop">Il workshop</a>
   </nav>
@@ -188,7 +203,7 @@
       <path class="traccia" d="M24 34 L40 46 L322 62 A26 26 0 0 1 322 114 L40 130 A26 26 0 0 0 40 182 L322 198 A26 26 0 0 1 322 250 L40 266 A26 26 0 0 0 40 318 L322 334 A26 26 0 0 1 322 386 L40 402 A26 26 0 0 0 40 454 L322 470 A26 26 0 0 1 322 522 L40 538 A26 26 0 0 0 40 590 L322 606"/>
 
       <!-- In fondo, la cima: il workshop -->
-      <a class="cima" href="#workshop" aria-label="Il workshop del 24 novembre">
+      <a class="cima in-arrivo" href="#workshop" aria-label="Il workshop del 24 novembre">
         <rect class="tocco" x="180" y="588" width="170" height="52"/>
         <path class="segno" d="M310 612 L322 590 L334 612 Z"/>
         <text x="304" y="630" text-anchor="end">IL WORKSHOP · 24/11</text>
@@ -257,6 +272,10 @@
       <li><a href="#d23"><span class="num">23</span>Il clima e le attività ricreative</a></li>
     </ol>
   </section>
+
+  <div class="esporta">
+    <a href="presinmed.pdf" download="Praterie altomontane della Maiella - PRESINMED.pdf">Scarica tutto in PDF</a>
+  </div>
 </div>
 
 <!-- ============ LE SCHEDE ============
@@ -589,10 +608,10 @@
     <div class="dato" data-risposte="2"><p><span>Il cambiamento climatico non influisce</span><b>13%</b></p><div class="barra" style="--p:13" aria-hidden="true"></div></div>
     <div class="dato" data-risposte="2"><p><span>Non so</span><b>13%</b></p><div class="barra nonso" style="--p:13" aria-hidden="true"></div></div>
   </div>
-  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d22">Domanda 22</a><a href="#workshop">Il workshop</a></nav>
+  <nav class="scheda-piede cond" aria-label="Altre domande"><a href="#d22">Domanda 22</a><a class="in-arrivo" href="#workshop">Il workshop</a></nav>
 </div></section>
 
-<section class="scheda" id="workshop" aria-labelledby="tw"><div>
+<section class="scheda in-arrivo" id="workshop" aria-labelledby="tw"><div>
   <div class="scheda-barra cond"><a class="indietro" href="#sentiero"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Torna al sentiero</a><span>Dal 24/11</span></div>
   <div class="scheda-testa"><h2 id="tw">Il workshop</h2></div>
   <p class="domanda">24 novembre 2026</p>
